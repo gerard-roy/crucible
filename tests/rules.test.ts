@@ -16,7 +16,7 @@ function rack(rows: string[], opts: { turn?: Player; mode?: Mode; smiths?: [numb
   for (let r = 0; r < ROWS; r++) {
     const line = full[ROWS - 1 - r];
     for (let c = 0; c < COLS; c++) {
-      const v = { '.': EMPTY, E: EMBER, F: FROST, S: SLAG }[line[c]] as number;
+      const v = '.EFS'.indexOf(line[c]);
       s.cells[idx(c, r)] = v;
       if (v !== EMPTY) n++;
     }
