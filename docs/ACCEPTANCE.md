@@ -1,0 +1,59 @@
+# Acceptance checklist: evidence so far
+
+Status words: **Pass** means checked and seen; **Not met** means checked and it fails; **Not checked** means nobody has looked yet.
+Browser checks ran in headless Chromium with a software renderer (no graphics card), so anything about frame rate is not checked.
+
+## Rules and rivals
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| `npm test` passes with at least 150 checks | Pass | 259 checks pass; CI runs them before each deploy |
+| Master beats Journeyman 75 of 100, Journeyman beats Apprentice 85 | Pass, counting decided games only | Full run: Master 70 wins, 21 losses, 9 draws (76.9% of decided). Journeyman 86, 8, 6 (91.5%). Counting draws as non-wins, Master's 70 of 100 is under 75 |
+| No smith wins more than 60% against another | Not met | Default full run: Brakka beats Vesper 64.5%. The other five pairings are between 40% and 60% |
+| Every masterstroke obeys its limits; a spent one cannot be reused | Pass | Rules tests; in the browser each stroke left the expected rack and showed as spent |
+| No computer move freezes the scene or lands in under 700ms | Partly | Four Master moves took 1201 to 1218ms. Freezing cannot be judged in a software renderer; the search runs in a Web Worker |
+
+## The world
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| 3D iron rack, 42 windows, chains, moving lava | Pass | Screenshots |
+| Embers, smoke, roof shaft, hall silhouettes in one screenshot | Not checked | The shaft, embers and silhouettes show; smoke has not been confirmed by eye |
+| Bloom, grade, vignette, grain on at High | Not checked | All four are in the post chain; no High screenshot yet |
+| Medallions light the rack; lava lights from below | Pass | Screenshots |
+| Ember and Frost differ by sigil | Pass | Hammer and star |
+| Does not look lesser beside Captain's Gambit | Not checked | Needs a side-by-side, and your eye |
+
+## Staging
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| Every drop has a fall, rattle, clang, sparks, sway | Pass | Sound log shows rattle, clang, sparks per drop; sparks and sway seen |
+| Face-off, open-line glow, winning drop, loss, draw | Partly | Face-off and winning drop seen. Loss and draw scenes are written but not yet watched |
+| Each masterstroke has its banner and scene | Pass | All four played to the correct rack with their sounds |
+| Outcome never shows before its beat | Pass | The HUD reads a copy of the state that updates after the beats |
+| Heartbeat at six or fewer slots | Not checked | Written, not yet watched |
+
+## Screens
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| Title, cards, rules switch, rival picker with keyboard, mouse, touch | Partly | Mouse and touch-sized layout seen; all are native buttons. Keyboard-only run not yet done |
+| Art loads by name; stand-ins when absent | Partly | Art loads. Stand-ins are written but not yet seen with a file removed |
+| Ledger and both cards stay correct through a full game | Partly | Correct through the short games played; no full game checked |
+| At 390 by 844 nothing overlaps; columns and buttons at least 44px | Pass | Columns measure 46px; no visible button under 44px in the title or the duel |
+
+## Sound
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| Every sound plays at its moment; the mixer changes each level | Partly | The sound log shows each effect fired at its moment. Nobody has listened, and the mixer has not been exercised |
+| Generated score plays when no music file exists | Not checked | No `music/theme.mp3` exists, so the generated score is the path taken; not yet confirmed |
+
+## Delivery
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| Frame-time log shows targets met at Medium and Low | Not checked | No graphics card on the build machine: the software renderer averaged 438ms a frame at Low, which says nothing about real hardware |
+| Live link serves the latest commit; CI tests before deploy | Pass | https://gerard-roy.github.io/crucible/ |
+| README covers play, run, test, deploy, swap art | Pass | README.md |
