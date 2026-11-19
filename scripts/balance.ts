@@ -1,6 +1,6 @@
 // npm run balance: level strength in standard rules and smith win rates in masterstroke rules.
 // The first drop alternates, draws are left out, and each smith's first drop is random so games differ.
-// Usage: tsx scripts/balance.ts [--quick] [--full-clock] [--seed n] [--only smiths|levels] [--pair 0,3] [--levers quench,hammer,upend]
+// Usage: tsx scripts/balance.ts [--quick] [--fast-clock] [--seed n] [--only smiths|levels] [--pair 0,3] [--levers quench,hammer,upend]
 
 import { chooseMove, resetSearch } from '../src/ai/search';
 import { levelOpts, type LevelId } from '../src/ai/levels';
@@ -8,8 +8,8 @@ import { DEFAULT_LEVERS, SMITHS, applyMove, droppable, makeRng, newGame, type Le
 
 const args = process.argv.slice(2);
 const quick = args.includes('--quick');
-/** Master gets its in-game 1.2 s a move instead of 250 ms. About 40 minutes for the level games. */
-const fullClock = args.includes('--full-clock');
+/** Master gets its in-game 1.2 s a move unless --quick or --fast-clock cut it to 250 ms. The level games take about 12 minutes on the full clock. */
+const fullClock = !quick && !args.includes('--fast-clock');
 const seedBase = args.includes('--seed') ? Number(args[args.indexOf('--seed') + 1]) : 1;
 const leverArg = args.includes('--levers') ? args[args.indexOf('--levers') + 1] ?? '' : null;
 /** Levers chosen for the shipped game live in src/settings; this flag tries others. */

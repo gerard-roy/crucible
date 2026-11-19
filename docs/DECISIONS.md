@@ -42,7 +42,7 @@ The smith cards read: Hammerfall "Knocks out the bottom medallion of one column,
 
 - **Evaluation** counts open lines of two and three, and adds weight to a line one short whose empty slot cannot be filled yet, more when the row parity means the rival will be forced to fill the slot under it. Without the parity term a nine-ply search beat a five-ply one in only about 60% of decided games.
 - **Masterstrokes in the search**: both smiths' masterstrokes are tried in the first two plies of every search (the mover's now, the rival's reply). Deeper plies are drops only, and a held masterstroke is worth a fixed bonus.
-- **Master in the balance script** thinks for 250 ms a move instead of 1.2 s so that 100 games finish in a few minutes. In the game it gets the full clock, so it is stronger than the number printed.
+- **Master in the balance script** gets its in-game 1.2 s a move, so the level games take about 12 minutes. `--fast-clock` or `--quick` cut it to 250 ms; at 250 ms it won 66, lost 23 and drew 11 against Journeyman (74.2% of decided games), just under the target, against 70, 21 and 9 (76.9%) on the full clock.
 - **Level targets are counted over decided games** ("draws left out"): Master must win 75% of decided games against Journeyman, Journeyman 85% against Apprentice.
 
 ## Staging and screens

@@ -74,10 +74,16 @@ async function boot(): Promise<void> {
   };
 
   let last = performance.now();
+  let manual = false;
   function frame(now: number): void {
+    if (manual) return;
     const raw = now - last;
-    const dt = Math.min(0.05, raw / 1000);
     last = now;
+    tick(raw);
+    requestAnimationFrame(frame);
+  }
+  function tick(raw: number): void {
+    const dt = Math.min(0.05, raw / 1000);
     // Nothing 3D is drawn while a full-screen panel covers it.
     world.paused = ui.covered;
     game.update(dt);
@@ -98,8 +104,9 @@ async function boot(): Promise<void> {
         }
       }
     }
-    requestAnimationFrame(frame);
   }
+  /** Stops the live loop and advances one frame of `ms`, for frame-by-frame recording. */
+  dev.__step = (ms: number) => { manual = true; tick(ms); };
   requestAnimationFrame(frame);
 }
 

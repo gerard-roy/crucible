@@ -8,7 +8,7 @@ Browser checks ran in headless Chromium with a software renderer (no graphics ca
 | Item | Status | Evidence |
 | --- | --- | --- |
 | `npm test` passes with at least 150 checks | Pass | 261 checks pass; CI runs them before each deploy |
-| Master beats Journeyman 75 of 100, Journeyman beats Apprentice 85 | Pass, counting decided games only | Full run: Master 70 wins, 21 losses, 9 draws (76.9% of decided). Journeyman 86, 8, 6 (91.5%). Counting draws as non-wins, Master's 70 of 100 is under 75 |
+| Master beats Journeyman 75 of 100, Journeyman beats Apprentice 85 | Pass, counting decided games only | Master on its in-game clock: 70 wins, 21 losses, 9 draws (76.9% of decided). Journeyman 93, 3, 4 (96.9%). Counting draws as non-wins, Master's 70 of 100 is under 75 |
 | No smith wins more than 60% against another | Pass, on the edge | With Quench costing the turn, the default run has every pairing between 40% and 60% (widest: Sylvi 58.5% against Oru). Six seeds pooled, 1,200 games a pairing: widest is Sylvi 59.0% against Oru. Single 200-game runs of three pairings land up to two points outside the cap. Table in `docs/DECISIONS.md` |
 | Every masterstroke obeys its limits; a spent one cannot be reused | Pass | Rules tests; in the browser each stroke left the expected rack and showed as spent |
 | No computer move freezes the scene or lands in under 700ms | Partly | Four Master moves took 1201 to 1218ms. Freezing cannot be judged in a software renderer; the search runs in a Web Worker |
