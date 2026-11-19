@@ -52,14 +52,16 @@ export const SMITHS: readonly Smith[] = [
   },
 ];
 
-/** Balance levers from the spec. All off by default. */
+/** Balance levers from the spec. docs/DECISIONS.md records which are on and why. */
 export interface Levers {
   quenchCostsTurn: boolean;
+  /** Hammerfall cannot knock out a rival medallion: the bottom of the column must be yours or slag. */
   hammerfallOwnOnly: boolean;
   /** Upend is legal only from this move number (1 = always). */
   upendFromMove: number;
 }
-export const DEFAULT_LEVERS: Levers = { quenchCostsTurn: false, hammerfallOwnOnly: false, upendFromMove: 1 };
+export const NO_LEVERS: Levers = { quenchCostsTurn: false, hammerfallOwnOnly: false, upendFromMove: 1 };
+export const DEFAULT_LEVERS: Levers = { quenchCostsTurn: false, hammerfallOwnOnly: true, upendFromMove: 1 };
 
 export type Move =
   | { t: 'drop'; col: number }
@@ -187,11 +189,7 @@ export function strokeTargets(s: State): Move[] {
       for (let c = 0; c < COLS; c++) {
         const h = height(s, c);
         if (h === 0) continue;
-        if (s.levers.hammerfallOwnOnly) {
-          let own = false;
-          for (let r = 0; r < h; r++) if (s.cells[idx(c, r)] === p) own = true;
-          if (!own) continue;
-        }
+        if (s.levers.hammerfallOwnOnly && s.cells[idx(c, 0)] === 3 - p) continue;
         out.push({ t: 'hammerfall', col: c });
       }
       break;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  COLS, ROWS, CELLS, EMPTY, EMBER, FROST, SLAG, WINDOWS, DEFAULT_LEVERS, SMITHS,
+  COLS, ROWS, CELLS, EMPTY, EMBER, FROST, SLAG, WINDOWS, DEFAULT_LEVERS, NO_LEVERS, SMITHS,
   applyMove, clone, droppable, findLines, height, idx, isLegal, legalMoves, longestLine, makeRng,
   newGame, openLines, strokeReady, strokeTargets, validate,
   type Mode, type Move, type Player, type State,
@@ -10,7 +10,7 @@ const BRAKKA = 0, SYLVI = 1, ORU = 2, VESPER = 3;
 
 /** Builds a state from rows written top to bottom: '.', 'E', 'F', 'S'. */
 function rack(rows: string[], opts: { turn?: Player; mode?: Mode; smiths?: [number, number] } = {}): State {
-  const s = newGame(opts.mode ?? 'standard', opts.smiths ?? [0, 1], opts.turn ?? 1);
+  const s = newGame(opts.mode ?? 'standard', opts.smiths ?? [0, 1], opts.turn ?? 1, { ...NO_LEVERS });
   const full = [...new Array(ROWS - rows.length).fill('.......'), ...rows];
   let n = 0;
   for (let r = 0; r < ROWS; r++) {
@@ -227,10 +227,26 @@ describe('Hammerfall', () => {
     expect(applyMove(s, { t: 'hammerfall', col: 0 }).removed!.piece).toBe(SLAG);
     expect(s.cells[0]).toBe(EMBER);
   });
-  it('own-column lever limits targets', () => {
+  it('lever: cannot knock out a rival medallion', () => {
     const s = rack(['EF.....'], ms);
     s.levers.hammerfallOwnOnly = true;
     expect(strokeTargets(s)).toEqual([{ t: 'hammerfall', col: 0 }]);
+    expect(isLegal(s, { t: 'hammerfall', col: 1 })).toBe(false);
+    expect(() => applyMove(s, { t: 'hammerfall', col: 1 })).toThrow();
+  });
+  it('lever: a rival base under your own medallion is still out of reach', () => {
+    const s = rack(['E......', 'F......'], ms);
+    s.levers.hammerfallOwnOnly = true;
+    expect(strokeTargets(s)).toEqual([]);
+  });
+  it('lever: slag at the base can be knocked out', () => {
+    const s = rack(['F..S...', 'S..F...'], ms);
+    s.levers.hammerfallOwnOnly = true;
+    expect(strokeTargets(s)).toEqual([{ t: 'hammerfall', col: 0 }]);
+  });
+  it('the lever is on in a new game', () => {
+    expect(newGame('masterstroke').levers.hammerfallOwnOnly).toBe(true);
+    expect(DEFAULT_LEVERS.hammerfallOwnOnly).toBe(true);
   });
 });
 
@@ -258,7 +274,7 @@ describe('Quench', () => {
     expect(droppable(s)).toContain(3);
   });
   it('does not block Hammerfall on the frozen column', () => {
-    const s = newGame('masterstroke', [SYLVI, BRAKKA]);
+    const s = newGame('masterstroke', [SYLVI, BRAKKA], 1, { ...NO_LEVERS });
     applyMove(s, { t: 'quench', col: 3 });
     drop(s, 3);
     expect(isLegal(s, { t: 'hammerfall', col: 3 })).toBe(true);
