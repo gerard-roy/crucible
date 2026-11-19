@@ -390,6 +390,7 @@ export class Crane {
   }
 
   get position(): number { return this.x; }
+  get speed(): number { return this.vx; }
 
   aimAt(col: number): void { this.target = slotX(col); }
 

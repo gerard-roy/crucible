@@ -156,6 +156,8 @@ export class Rack {
   readonly group = new THREE.Group();
   /** Rack-local space: slot (col,row) is at (slotX, slotY, 0). Upend turns this. */
   readonly inner = new THREE.Group();
+  /** Chains and their eyes: they stay put when the rack turns over. */
+  readonly hangers = new THREE.Group();
   readonly iron: THREE.MeshStandardMaterial;
   private plateMat: THREE.MeshStandardMaterial;
   private channelGlow: THREE.Mesh[] = [];
@@ -171,6 +173,8 @@ export class Rack {
     this.group.position.y = PIVOT_Y;
     this.inner.position.y = -PIVOT_Y;
     this.group.add(this.inner);
+    this.hangers.position.y = -PIVOT_Y;
+    this.group.add(this.hangers);
 
     const tex = ironTexture();
     tex.repeat.set(0.35, 0.35);
@@ -218,14 +222,14 @@ export class Rack {
         const e = new THREE.Mesh(eye, this.iron);
         e.position.set(sx * (hw + 0.12), hh + 0.85, sz * 0.3);
         e.rotation.y = Math.PI / 2;
-        this.inner.add(e);
+        this.hangers.add(e);
         const chain = makeChain(
           new THREE.Vector3(sx * (hw + 0.12), hh + 1.0, sz * 0.3),
           new THREE.Vector3(sx * (hw + 1.6), PIVOT_Y + 4, sz * 1.4),
           this.iron,
           1.25,
         );
-        this.inner.add(chain);
+        this.hangers.add(chain);
       }
     }
     // Rivets at every crossing between windows, front and back.

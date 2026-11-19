@@ -32,7 +32,7 @@ export class CameraRig {
   private fit(): number {
     const vfov = (this.camera.fov * Math.PI) / 180;
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * this.aspect);
-    const needW = this.aspect < 1 ? 9.2 : 15.5;
+    const needW = this.aspect < 1 ? 8.5 : 15.5;
     const needH = this.aspect < 1 ? 15.5 : 12.6;
     return Math.max(needW / 2 / Math.tan(hfov / 2), needH / 2 / Math.tan(vfov / 2));
   }
