@@ -1,7 +1,10 @@
 // Dev helper: node scripts/shot.mjs out.png [width height] [steps]
 // Steps are separated by ;; and t:N waits N seconds of game time: light, skip, a digit string of columns to drop, g, key:Tab, wait:1500, click:#id, eval:<js>
 import { chromium } from '@playwright/test';
-const [out = 'shot.png', w = '1440', h = '900', steps = ''] = process.argv.slice(2);
+import { readFileSync } from 'node:fs';
+const [out = 'shot.png', w = '1440', h = '900', stepArg = ''] = process.argv.slice(2);
+// A steps argument starting with @ names a file to read the steps from.
+const steps = stepArg.startsWith('@') ? readFileSync(stepArg.slice(1), 'utf8').trim() : stepArg;
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'] });
 const phone = +w < 600;
 const ctx = await browser.newContext({ viewport: { width: +w, height: +h }, hasTouch: phone, isMobile: phone, deviceScaleFactor: 1 });
