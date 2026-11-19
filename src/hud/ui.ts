@@ -183,7 +183,7 @@ export class UI implements Screens {
 
   refresh(): void {
     const g = this.game;
-    const s = g.state;
+    const s = g.shown;
     if (g.phase === 'title') return;
     if (g.phase !== 'faceoff') this.faceEl.hidden = true;
     const ms = g.cfg.mode === 'masterstroke';
@@ -208,8 +208,8 @@ export class UI implements Screens {
     ([1, 2] as Player[]).forEach((p) => {
       const c = this.cards[p - 1];
       c.classList.toggle('turn', s.winner === 0 && s.turn === p && g.phase === 'play');
-      c.classList.toggle('ready', ms && s.ready[p - 1]);
-      c.classList.toggle('spent', ms && !s.ready[p - 1]);
+      c.classList.toggle('ready', ms && g.state.ready[p - 1]);
+      c.classList.toggle('spent', ms && !g.state.ready[p - 1]);
     });
     this.ledgerEl.replaceChildren(...g.ledger.slice(0, 40).map((l) => h('li', { class: l.player === 1 ? 'e' : 'f' }, h('b', {}, g.label(l.player) + ': '), l.text)));
     if (!g.ledger.length) this.ledgerEl.append(h('li', { class: 'none' }, 'No moves yet'));
@@ -226,7 +226,7 @@ export class UI implements Screens {
     b.dataset.side = String(p);
     b.classList.toggle('targeting', g.targeting);
     if (g.targeting) { b.textContent = sm.strokeName + ': pick a target (Esc cancels)'; b.disabled = false; }
-    else if (!s.ready[p - 1]) { b.textContent = sm.strokeName + ': spent'; b.disabled = true; }
+    else if (!g.state.ready[p - 1]) { b.textContent = sm.strokeName + ': spent'; b.disabled = true; }
     else if (s.mustDrop) { b.textContent = sm.strokeName + ': spent'; b.disabled = true; }
     else { b.textContent = sm.strokeName + ': ready (G)'; b.disabled = !g.strokeAvailable; }
     b.title = sm.strokeDesc;

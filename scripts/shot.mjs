@@ -1,5 +1,5 @@
 // Dev helper: node scripts/shot.mjs out.png [width height] [steps]
-// Steps are comma separated: light, skip, a digit string of columns to drop, g, key:Tab, wait:1500, click:#id, eval:<js>
+// Steps are separated by ;; and t:N waits N seconds of game time: light, skip, a digit string of columns to drop, g, key:Tab, wait:1500, click:#id, eval:<js>
 import { chromium } from '@playwright/test';
 const [out = 'shot.png', w = '1440', h = '900', steps = ''] = process.argv.slice(2);
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'] });
@@ -11,13 +11,14 @@ page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto(process.env.URL ?? 'http://localhost:5173/');
 await page.waitForFunction(() => window.__game, null, { timeout: 60000 });
-if (process.env.SETUP) await page.evaluate(process.env.SETUP);
+if (process.env.SETUP) { await page.evaluate(process.env.SETUP); await page.reload(); await page.waitForFunction(() => window.__game, null, { timeout: 60000 }); }
 const idle = () => page.waitForFunction(() => { const g = window.__game; return g.phase === 'over' || (g.phase === 'play' && !g.beats.busy && !g.thinking && !g.isRival(g.state.turn)); }, null, { timeout: 120000 });
-for (const step of steps.split(',').filter(Boolean)) {
+for (const step of steps.split(';;').filter(Boolean)) {
   if (step === 'light') { await page.click('#light'); }
   else if (step === 'skip') { await page.waitForTimeout(400); await page.keyboard.press('x'); await idle(); }
   else if (step === 'g') { await page.keyboard.press('g'); await page.waitForTimeout(300); }
   else if (step === 'idle') { await idle(); }
+  else if (step.startsWith('t:')) { const until = (await page.evaluate(() => window.__game.clock)) + +step.slice(2); await page.waitForFunction((u) => window.__game.clock >= u, until, { timeout: 200000 }); }
   else if (step.startsWith('key:')) { await page.keyboard.press(step.slice(4)); await page.waitForTimeout(300); }
   else if (step.startsWith('wait:')) { await page.waitForTimeout(+step.slice(5)); }
   else if (step.startsWith('click:')) { await page.click(step.slice(6)); await page.waitForTimeout(300); }

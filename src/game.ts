@@ -43,6 +43,11 @@ export class Game {
   readonly beats = new Beats();
   cfg: Config = { mode: 'standard', smiths: [0, 1], rival: 'journeyman' };
   state: State = newGame();
+  /** What the HUD shows. It catches up with `state` only after the beats have revealed a move. */
+  shown: State = newGame();
+  /** Game time in seconds, as the beats see it. */
+  clock = 0;
+  private resolving = false;
   phase: Phase = 'title';
   ledger: LedgerLine[] = [];
   used: [boolean, boolean] = [false, false];
@@ -111,11 +116,12 @@ export class Game {
     return this.phase === 'play' && !this.beats.busy && !this.thinking && this.state.winner === 0 && !this.isRival(this.state.turn);
   }
   get strokeAvailable(): boolean { return this.canAct && strokeReady(this.state); }
-  get openLineCount(): number { return openLines(this.state.cells).length; }
-  get lastSlots(): boolean { return this.state.winner === 0 && slotsLeft(this.state) <= 6; }
+  get openLineCount(): number { return openLines(this.shown.cells).length; }
+  get lastSlots(): boolean { return this.shown.winner === 0 && slotsLeft(this.shown) <= 6; }
 
   statusText(): string {
-    const s = this.state;
+    const s = this.shown;
+    if (this.resolving && this.phase === 'play') return '\u2026';
     if (this.phase === 'faceoff') return 'Light the forge';
     if (s.winner === 3) return 'Cold iron';
     if (s.winner !== 0) return this.isRival(s.winner) ? 'Broken' : 'Forged';
@@ -139,6 +145,7 @@ export class Game {
     this.cfg = { ...cfg, smiths: [cfg.smiths[0], cfg.smiths[1]] };
     this.first = first;
     this.state = newGame(cfg.mode, this.cfg.smiths, first);
+    this.shown = clone(this.state);
     this.ledger = [];
     this.used = [false, false];
     this.resetScene();
@@ -162,6 +169,7 @@ export class Game {
     if (!v) return false;
     this.cfg = v.cfg;
     this.state = v.state;
+    this.shown = clone(this.state);
     this.first = v.first;
     this.ledger = v.ledger ?? [];
     this.used = v.used ?? [false, false];
@@ -208,6 +216,7 @@ export class Game {
     this.thinking = false;
     this.targeting = false;
     this.skipping = false;
+    this.resolving = false;
     w.medals.clear();
     w.clearAim();
     for (const s of this.seams) { w.rack.inner.remove(s); (s.material as THREE.Material).dispose(); s.geometry.dispose(); }
@@ -374,6 +383,7 @@ export class Game {
     await this.beats.wait(3.4);
     if (gen !== this.gen) return;
     w.rig.stiffness = 3.2;
+    if (this.skipping) { const pose = { pos: new THREE.Vector3(), look: new THREE.Vector3() }; w.rig.pose('rack', pose); w.rig.snap(pose.pos, pose.look); }
     this.skipping = false;
     this.phase = 'play';
     this.after();
@@ -381,6 +391,8 @@ export class Game {
 
   /** After every move: glow, heartbeat, save, and hand over to the rival if it is their turn. */
   private after(): void {
+    this.shown = clone(this.state);
+    this.resolving = false;
     this.markThreats();
     this.syncFrost();
     this.sound.setLastSlots(this.lastSlots);
@@ -432,6 +444,7 @@ export class Game {
     const out = applyMove(this.state, move);
     const p = out.player;
     this.targeting = false;
+    this.resolving = true;
     this.world.clearAim();
     for (const m of this.world.medals.list) m.hotTarget = 0;
     this.sound.openLine(false);
@@ -462,6 +475,8 @@ export class Game {
       else if (this.isRival(out.winner as Player)) await this.lossScene(out);
       else await this.winScene(out, move.t === 'drop');
       if (gen !== this.gen) return;
+      this.shown = clone(this.state);
+      this.resolving = false;
       this.phase = 'over';
       this.screens.refresh();
       this.screens.result(true);
@@ -768,6 +783,7 @@ export class Game {
     // Holding Space doubles the speed of any beat except the winning drop.
     this.beats.speed = this.skipping ? 12 : this.space ? 2 : 1;
     this.beats.update(dt);
+    this.clock += dt;
     const k = 1 - Math.exp(-dt * 4);
     for (let c = 0; c < COLS; c++) {
       this.frost[c] += (this.frostGoal[c] - this.frost[c]) * k;
