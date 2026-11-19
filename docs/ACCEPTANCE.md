@@ -19,7 +19,7 @@ Browser checks ran in headless Chromium with a software renderer (no graphics ca
 | --- | --- | --- |
 | 3D iron rack, 42 windows, chains, moving lava | Pass | Screenshots |
 | Embers, smoke, roof shaft, hall silhouettes in one screenshot | Not checked | The shaft, embers and silhouettes show; smoke has not been confirmed by eye |
-| Bloom, grade, vignette, grain on at High | Not checked | All four are in the post chain; no High screenshot yet |
+| Bloom, grade, vignette, grain on at High | Pass | Seen in the High screenshots and the winning-drop recording |
 | Medallions light the rack; lava lights from below | Pass | Screenshots |
 | Ember and Frost differ by sigil | Pass | Hammer and star |
 | Does not look lesser beside Captain's Gambit | Not checked | Needs a side-by-side, and your eye |
@@ -29,7 +29,7 @@ Browser checks ran in headless Chromium with a software renderer (no graphics ca
 | Item | Status | Evidence |
 | --- | --- | --- |
 | Every drop has a fall, rattle, clang, sparks, sway | Pass | Sound log shows rattle, clang, sparks per drop; sparks and sway seen |
-| Face-off, open-line glow, winning drop, loss, draw | Partly | Face-off and winning drop seen in screenshots. A lost game against Master ended on "Broken" with the loss sound; a 42-drop drawn game ended on "Cold iron" with the draw sound. The loss and draw pictures and the open-line glow have not been looked at by eye |
+| Face-off, open-line glow, winning drop, loss, draw | Partly | Face-off, winning drop, loss ("Broken", scene dimmed to cold blue) and draw ("Cold iron", scene drained to grey) seen in High screenshots; the winning drop also in the 20-second recording. The open-line glow has not been looked at by eye |
 | Each masterstroke has its banner and scene | Pass | All four played to the correct rack with their sounds |
 | Outcome never shows before its beat | Pass | The HUD reads a copy of the state that updates after the beats |
 | Heartbeat at six or fewer slots | Pass | In the drawn game the heartbeat was on at 36 drops (six slots left), had thumped 11 times by the end, and stopped when the game ended. Not listened to |

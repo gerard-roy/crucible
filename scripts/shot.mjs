@@ -9,13 +9,14 @@ const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=sw
 const phone = +w < 600;
 const ctx = await browser.newContext({ viewport: { width: +w, height: +h }, hasTouch: phone, isMobile: phone, deviceScaleFactor: 1 });
 const page = await ctx.newPage();
+page.setDefaultTimeout(240000);
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto(process.env.URL ?? 'http://localhost:5173/');
 await page.waitForFunction(() => window.__game, null, { timeout: 60000 });
 if (process.env.SETUP) { await page.evaluate(process.env.SETUP); await page.reload(); await page.waitForFunction(() => window.__game, null, { timeout: 60000 }); }
-const idle = () => page.waitForFunction(() => { const g = window.__game; return g.phase === 'over' || (g.phase === 'play' && !g.beats.busy && !g.thinking && !g.isRival(g.state.turn)); }, null, { timeout: 120000 });
+const idle = () => page.waitForFunction(() => { const g = window.__game; return g.phase === 'over' || (g.phase === 'play' && !g.beats.busy && !g.thinking && !g.isRival(g.state.turn)); }, null, { timeout: 900000 });
 for (const step of steps.split(';;').filter(Boolean)) {
   if (step === 'light') { await page.click('#light'); }
   else if (step === 'skip') { await page.waitForTimeout(400); await page.keyboard.press('x'); await idle(); }
