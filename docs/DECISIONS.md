@@ -27,3 +27,13 @@ The smith card text for Hammerfall reads: "Knocks out the bottom medallion of on
 - **Masterstrokes in the search**: both smiths' masterstrokes are tried in the first two plies of every search (the mover's now, the rival's reply). Deeper plies are drops only, and a held masterstroke is worth a fixed bonus.
 - **Master in the balance script** thinks for 250 ms a move instead of 1.2 s so that 100 games finish in a few minutes. In the game it gets the full clock, so it is stronger than the number printed.
 - **Level targets are counted over decided games** ("draws left out"): Master must win 75% of decided games against Journeyman, Journeyman 85% against Apprentice.
+
+## Staging and screens
+
+- The HUD reads a copy of the state that only catches up once a move's beats have played, so an outcome never shows before its beat. The masterstroke shows as spent from its banner onward.
+- The smith cards have no clips: the packet lists them as optional extras and no clip files were supplied. The selected card lifts and takes the ember border.
+- The face-off lasts 6 seconds: 2.6 for the portraits and strike, 3.4 for the descent down the chains. Any key or a tap skips it.
+- A win by masterstroke (no falling medallion) skips the slow fall and goes straight to the flash.
+- In a hot-seat game either smith's win plays the "Forged" scene; "Broken" plays only when a computer rival wins.
+- Meltdown is aimed with the pointer, or with the arrow keys and Enter.
+- Auto quality starts at Medium, measures two seconds of frames once the forge is on screen, and moves once: to Low above 20ms a frame, to High below 11.5ms on a desktop.
