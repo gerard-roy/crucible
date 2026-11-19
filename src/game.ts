@@ -72,7 +72,7 @@ export class Game {
     // Real acceleration: the fall takes 350 to 650ms depending on its height.
     const dur = 0.35 + 0.3 * ((from - to) - 1.25) / 5;
     await this.beats.run(dur, (t) => { medal.mesh.position.y = from + (to - from) * t * t; });
-    // A short bounce stands in for the clang until milestone 5.
+    this.world.impact(col, row, out.player);
     await this.beats.run(0.3, (t) => { medal.mesh.position.y = to + Math.sin(t * Math.PI) * 0.06 * (1 - t); });
     if (out.winner === 1 || out.winner === 2) {
       for (const line of out.lines) for (const i of line.cells) {
