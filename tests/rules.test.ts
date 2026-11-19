@@ -253,7 +253,7 @@ describe('Hammerfall', () => {
 describe('Quench', () => {
   const ms = { mode: 'masterstroke' as Mode, smiths: [SYLVI, BRAKKA] as [number, number] };
   it('is free: the same smith then drops', () => {
-    const s = newGame('masterstroke', [SYLVI, BRAKKA]);
+    const s = newGame('masterstroke', [SYLVI, BRAKKA], 1, { ...NO_LEVERS });
     const o = applyMove(s, { t: 'quench', col: 3 });
     expect(o.turnEnded).toBe(false);
     expect(o.frozen).toBe(3);
@@ -263,7 +263,7 @@ describe('Quench', () => {
     expect(legalMoves(s)).toHaveLength(7);
   });
   it('blocks the rival from that column for one turn', () => {
-    const s = newGame('masterstroke', [SYLVI, BRAKKA]);
+    const s = newGame('masterstroke', [SYLVI, BRAKKA], 1, { ...NO_LEVERS });
     applyMove(s, { t: 'quench', col: 3 });
     drop(s, 3);
     expect(droppable(s)).toEqual([0, 1, 2, 4, 5, 6]);
@@ -283,7 +283,7 @@ describe('Quench', () => {
   });
   it('does not block Meltdown or Upend on the frozen column', () => {
     for (const rival of [ORU, VESPER]) {
-      const s = newGame('masterstroke', [SYLVI, rival]);
+      const s = newGame('masterstroke', [SYLVI, rival], 1, { ...NO_LEVERS });
       applyMove(s, { t: 'quench', col: 3 });
       drop(s, 3);
       const m: Move = rival === ORU ? { t: 'meltdown', col: 3, row: 0 } : { t: 'upend' };
@@ -309,14 +309,14 @@ describe('Quench', () => {
     expect(droppable(s)).toEqual([6]);
   });
   it('is spent after use', () => {
-    const s = newGame('masterstroke', [SYLVI, BRAKKA]);
+    const s = newGame('masterstroke', [SYLVI, BRAKKA], 1, { ...NO_LEVERS });
     applyMove(s, { t: 'quench', col: 3 });
     expect(isLegal(s, { t: 'quench', col: 2 })).toBe(false);
     drop(s, 0, 1);
     expect(isLegal(s, { t: 'quench', col: 2 })).toBe(false);
   });
   it('the quencher may drop in the frozen column', () => {
-    const s = newGame('masterstroke', [SYLVI, BRAKKA]);
+    const s = newGame('masterstroke', [SYLVI, BRAKKA], 1, { ...NO_LEVERS });
     applyMove(s, { t: 'quench', col: 3 });
     expect(isLegal(s, { t: 'drop', col: 3 })).toBe(true);
   });
@@ -326,6 +326,26 @@ describe('Quench', () => {
     expect(o.turnEnded).toBe(true);
     expect(s.turn).toBe(2);
     expect(droppable(s)).not.toContain(3);
+  });
+  it('the turn-cost lever is on in a new game', () => {
+    expect(DEFAULT_LEVERS.quenchCostsTurn).toBe(true);
+    const s = newGame('masterstroke', [SYLVI, BRAKKA]);
+    drop(s, 0);
+    drop(s, 1);
+    applyMove(s, { t: 'quench', col: 3 });
+    expect(s.turn).toBe(2);
+    expect(s.mustDrop).toBe(false);
+  });
+  it('with the turn cost the column thaws after the rival\'s next move', () => {
+    const s = newGame('masterstroke', [SYLVI, BRAKKA]);
+    drop(s, 0);
+    drop(s, 1);
+    applyMove(s, { t: 'quench', col: 3 });
+    expect(isLegal(s, { t: 'drop', col: 3 })).toBe(false);
+    drop(s, 2);
+    expect(s.frozenFor).toBe(0);
+    drop(s, 3);
+    expect(isLegal(s, { t: 'drop', col: 3 })).toBe(true);
   });
 });
 

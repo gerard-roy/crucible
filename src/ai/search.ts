@@ -14,6 +14,8 @@ const M28 = 0x0fffffff;
 const ORDER = [3, 2, 4, 1, 5, 0, 6];
 /** Plies from the root in which masterstrokes are searched. */
 const STROKE_PLIES = 2;
+/** What a free Quench must gain before it is spent on anything short of a win. */
+const QUENCH_PATIENCE = 200;
 /** What an unspent masterstroke is worth, so a rival does not throw it away. */
 const HOLD = 14;
 const W = [0, 1, 4, 16, 0];
@@ -53,6 +55,7 @@ class Table {
     this.b[i] = key | 0;
     this.v[i] = value;
   }
+  clear(): void { this.v.fill(0); }
 }
 
 function now(): number {
@@ -458,6 +461,9 @@ export interface SearchResult {
 
 const tt = new Table();
 
+/** Forgets earlier searches, so a run of games does not depend on what was searched before it. */
+export function resetSearch(): void { tt.clear(); }
+
 interface RootMove { move: Move; order: number }
 
 function rootMoves(pos: Pos, rng: () => number): RootMove[] {
@@ -490,7 +496,8 @@ function scoreRoot(pos: Pos, m: Move, ctx: Ctx, depth: number, alpha: number, be
     }
     // Free: the same smith still drops, so the score is not negated.
     child.mustDrop = true;
-    return child.negamax(ctx, depth, alpha, beta, 0) - 1;
+    const q = child.negamax(ctx, depth, alpha, beta, 0);
+    return q > WIN - 100 ? q - 1 : q - QUENCH_PATIENCE;
   }
   child.stroke(m);
   return child.afterStroke(ctx, depth, alpha, beta, 0);

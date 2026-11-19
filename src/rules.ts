@@ -29,14 +29,14 @@ export const SMITHS: readonly Smith[] = [
   {
     id: 'brakka', name: 'Brakka Ironhand', short: 'Brakka', motto: 'Hit it until it rings true.',
     stroke: 'hammerfall', strokeName: 'Hammerfall',
-    strokeDesc: 'Knocks out the bottom medallion of one column. The rest of that column drops one slot.',
+    strokeDesc: 'Knocks out the bottom medallion of one column, if it is yours or slag. The rest of that column drops one slot.',
     cost: 'Your turn',
   },
   {
     id: 'sylvi', name: 'Sylvi Frostvein', short: 'Sylvi', motto: 'Cold hands, clean steel.',
     stroke: 'quench', strokeName: 'Quench',
     strokeDesc: 'Freezes one column. Your rival cannot drop there on their next turn.',
-    cost: 'Free, then you drop',
+    cost: 'Your turn',
   },
   {
     id: 'oru', name: 'Master Oru', short: 'Oru', motto: 'Everything melts. Be patient.',
@@ -61,7 +61,7 @@ export interface Levers {
   upendFromMove: number;
 }
 export const NO_LEVERS: Levers = { quenchCostsTurn: false, hammerfallOwnOnly: false, upendFromMove: 1 };
-export const DEFAULT_LEVERS: Levers = { quenchCostsTurn: false, hammerfallOwnOnly: true, upendFromMove: 1 };
+export const DEFAULT_LEVERS: Levers = { quenchCostsTurn: true, hammerfallOwnOnly: true, upendFromMove: 1 };
 
 export type Move =
   | { t: 'drop'; col: number }

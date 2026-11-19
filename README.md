@@ -13,7 +13,7 @@ Under Masterstroke rules each smith has one masterstroke per game:
 | Smith | Masterstroke | What it does |
 | --- | --- | --- |
 | Brakka Ironhand | Hammerfall | Knocks out the bottom medallion of a column (your own or slag). The rest drops one slot. Costs your turn. |
-| Sylvi Frostvein | Quench | Freezes a column against your rival's next drop. Free, then you drop. |
+| Sylvi Frostvein | Quench | Freezes a column against your rival's next drop. Costs your turn. |
 | Master Oru | Meltdown | Turns one rival medallion into slag, which counts for no one. Costs your turn. |
 | Vesper Quill | Upend | Turns the rack over. Every medallion falls to the new bottom. Costs your turn. |
 

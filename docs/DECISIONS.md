@@ -6,20 +6,37 @@ Choices the packet left open, and changes made to hit its targets.
 
 - **A full rack with no line is a draw at once**, even if a smith still holds a masterstroke.
 - **Two lines at once.** If a move leaves both smiths with a line, the smith who did not move wins (packet rule). Upend and Hammerfall are the only moves that can do this.
-- **Quench is free**: the smith freezes a column and then still drops. It thaws after the rival's next drop.
+- **Quench costs the turn** (a balance lever, see below): the smith freezes a column instead of dropping. It thaws after the rival's next move.
 
 ## Balance
 
-Measured with `npm run balance` (Journeyman against Journeyman, 200 games a pairing, first drop alternating, the first drop of each smith random so that games differ, draws left out).
+Measured with `npm run balance` (Journeyman against Journeyman, 200 games a pairing, first drop alternating, the first drop of each smith random so that games differ, draws left out). One 200-game run moves a pairing by several points either way, so the choices below were made on six seeds pooled (1,200 games a pairing, `--seed 1` to `--seed 6`).
+
+Two levers are on: **Hammerfall cannot knock out a rival medallion** and **Quench costs the turn**. Upend stays legal from the first move.
+
+| Pairing | Share of decided games, six seeds pooled | Lowest and highest single seed |
+| --- | --- | --- |
+| Brakka against Sylvi | Brakka 57.0% | 53% to 62% |
+| Brakka against Oru | Brakka 50.8% | 45% to 55% |
+| Brakka against Vesper | Brakka 55.0% | 52% to 57% |
+| Sylvi against Oru | Sylvi 59.0% | 56% to 61% |
+| Sylvi against Vesper | Vesper 54.1% | 49% to 62% |
+| Oru against Vesper | Oru 53.0% | 45% to 59% |
+
+Every pairing is inside 40-60% pooled, and on the script's default seed. Sylvi against Oru sits one point under the cap, and single 200-game runs of three pairings land a point or two outside it, so treat the cap as met on the edge rather than with room.
+
+How it got there:
 
 1. **With no levers, Brakka beat Vesper in 83% of decided games.** The cause is one pattern: Brakka makes three in a row with a gap, the rival must block the gap, Brakka drops on top of the blocker and then knocks the blocker out with Hammerfall, so his own medallion falls into the gap. Only Quench (freeze the column) or Meltdown (slag one of the three) answers it.
-2. **Lever tried: Hammerfall only on a column that holds one of your own medallions** (the packet's wording). Brakka against Vesper stayed at 85%, because in the pattern above Brakka's own medallion is already in the column. Adding "Quench costs the turn" or "Upend from the tenth move" on top made things worse or changed nothing (Brakka 78% against Sylvi; Brakka 80% against Vesper).
-3. **Lever as shipped: Hammerfall cannot knock out a rival medallion.** The bottom medallion of the struck column must be Brakka's own or slag. This is a stricter reading of the packet's Hammerfall lever and it removes the pattern in point 1. Letting him knock out slag matters only against Oru and moved that pairing from 34% to 39-49% for Brakka.
-4. Quench stays free and Upend stays legal from the first move.
+2. **The packet's wording of the Hammerfall lever** (only on a column that holds one of your own medallions) left Brakka at 85%, because in that pattern his own medallion is already in the column.
+3. **Hammerfall as shipped cannot knock out a rival medallion.** The bottom medallion of the struck column must be Brakka's own or slag. This is a stricter reading of the packet's lever and it removes the pattern in point 1.
+4. **A free Quench is a forced win.** Sylvi drops to make three in a row and, in the same turn, freezes the one column where the rival could block. Unless the rival can win at once or holds a masterstroke that breaks the line, she completes it next turn. The first balance runs missed this because the Journeyman spent Quench around its third move for a small gain. Once the search was told to keep a free Quench for a win, Sylvi won 93% of decided games against Brakka, 80% against Oru and 89% against Vesper (`npm run balance -- --only smiths --levers hammer`).
+5. **So Quench costs the turn** (the packet's first lever). Sylvi freezes a column instead of dropping, and it thaws after the rival's next move. With that the table above holds.
+6. An earlier note here said every pairing was inside the cap with Quench free. That was true only because of the wasted Quench in point 4, and on six seeds Oru beat Sylvi in 61.8% even then.
 
-Result on the script's fixed seed: every pairing is inside 40-60%. The closest pairing is Sylvi against Oru (Oru 59%); on one of the other seeds tried it reached 65%, so treat it as on the edge rather than settled.
+The balance script clears the search's memory before each pairing, so a pairing's result no longer depends on which games ran before it.
 
-The smith card text for Hammerfall reads: "Knocks out the bottom medallion of one column, if it is yours or slag. The rest of that column drops one slot."
+The smith cards read: Hammerfall "Knocks out the bottom medallion of one column, if it is yours or slag. The rest of that column drops one slot." Quench "Freezes one column. Your rival cannot drop there on their next turn." with the cost "Your turn".
 
 ## Rivals
 
