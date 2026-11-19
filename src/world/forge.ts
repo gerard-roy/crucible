@@ -227,7 +227,7 @@ export class Forge {
     g.add(rail2);
 
     // Light. The lava is the key, warm and from below.
-    this.lavaLight = new THREE.PointLight(0xff7a1a, 70, 60, 1.7);
+    this.lavaLight = new THREE.PointLight(0xff7a1a, 120, 60, 1.7);
     this.lavaLight.position.set(0, LAVA_Y + 2.2, 5.5);
     g.add(this.lavaLight);
     const side1 = new THREE.PointLight(0xff5a10, 130, 80, 1.7);
@@ -323,7 +323,7 @@ export class Forge {
 
   private sideLights: THREE.PointLight[];
   private hemi: THREE.HemisphereLight;
-  private base = { lava: 70, sides: [130, 160, 380], hemi: 0.35 };
+  private base = { lava: 120, sides: [130, 160, 380], hemi: 0.35 };
 
   setPixelScale(s: number): void {
     (this.ash.material as THREE.ShaderMaterial).uniforms.uScale.value = s;

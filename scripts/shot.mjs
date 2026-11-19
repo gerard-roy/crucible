@@ -8,7 +8,7 @@ page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto(process.env.URL ?? 'http://localhost:5173/');
 await page.waitForTimeout(2500);
-for (const c of drops) { await page.keyboard.press(String(+c + 1)); await page.waitForTimeout(1300); }
+for (const c of drops) { await page.keyboard.press(String(+c + 1)); await page.waitForTimeout(300); await page.waitForFunction(() => !window.__game.beats.busy, null, { timeout: 60000 }); }
 await page.waitForTimeout(800);
 await page.screenshot({ path: out });
 if (errors.length) console.log('ERRORS', errors.slice(0, 8).join('\n'));

@@ -184,10 +184,12 @@ export class Rack {
     this.plateMat.emissiveMap = runes;
     this.plateMat.emissiveIntensity = this.runes;
 
-    const plateGeo = new THREE.ExtrudeGeometry(plateShape(), { depth: 0.09, bevelEnabled: true, bevelSize: 0.025, bevelThickness: 0.025, bevelSegments: 1, curveSegments: 20 });
-    const front = new THREE.Mesh(plateGeo, this.plateMat);
+    const plateGeo = new THREE.ExtrudeGeometry(plateShape(), { depth: 0.14, bevelEnabled: false, curveSegments: 20 });
+    // The window walls are matte so the lava light does not glint in every empty slot.
+    const wall = new THREE.MeshStandardMaterial({ color: 0x14110f, metalness: 0.1, roughness: 1 });
+    const front = new THREE.Mesh(plateGeo, [this.plateMat, wall]);
     front.position.z = 0.115;
-    const back = new THREE.Mesh(plateGeo, this.iron);
+    const back = new THREE.Mesh(plateGeo, [this.iron, wall]);
     back.position.z = -0.205;
     this.inner.add(front, back);
 
